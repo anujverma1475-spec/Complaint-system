@@ -18,6 +18,8 @@ jobs:
           port: 65002
           username: u120985039
           password: ${{ secrets.HOSTINGER_SSH_PASSWORD }}
+          timeout: 120s
+          command_timeout: 10m
           script: |
             export PATH=/opt/alt/alt-nodejs22/root/usr/bin:$PATH
             BACKEND_DIR="$HOME/domains/anuj.jaidevs.in/backend"
