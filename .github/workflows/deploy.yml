@@ -45,10 +45,11 @@ jobs:
             echo "=== Ensuring uploads directory ==="
             mkdir -p $BACKEND_DIR/uploads
 
-            echo "=== Restarting Node server ==="
+            # Restart Node server with stdin/stdout detached so process survives SSH disconnect
             pkill -f "node server.js" || true
             sleep 1
-            nohup node server.js > $BACKEND_DIR/app.log 2>&1 &
+            nohup node server.js </dev/null >$BACKEND_DIR/app.log 2>&1 &
+            disown
             sleep 2
             cat $BACKEND_DIR/app.log
 
