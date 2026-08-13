@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Builds
+dist/
+**/dist/
+.vite/
+
+# Uploads
+server/uploads/*
+!server/uploads/.gitkeep
+
+# System & Logs
+.DS_Store
+*.log
+npm-debug.log*
