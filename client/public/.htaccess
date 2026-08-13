@@ -1,0 +1,13 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Proxy /api and /uploads to PHP proxy script
+  RewriteRule ^api/(.*)$ api.php [L,QSA]
+  RewriteRule ^uploads/(.*)$ api.php [L,QSA]
+
+  # React SPA fallback for client side routing
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
