@@ -46,7 +46,7 @@ jobs:
             mkdir -p $BACKEND_DIR/uploads
 
             # Restart Node server with stdin/stdout detached so process survives SSH disconnect
-            pkill -f "node server.js" || true
+            pkill -f "[n]ode server.js" || true
             sleep 1
             nohup node server.js </dev/null >$BACKEND_DIR/app.log 2>&1 &
             disown
