@@ -1,0 +1,55 @@
+name: Deploy to Hostinger
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy backend + restart Node via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 145.79.25.57
+          port: 65002
+          username: u120985039
+          password: ${{ secrets.HOSTINGER_SSH_PASSWORD }}
+          script: |
+            export PATH=/opt/alt/alt-nodejs22/root/usr/bin:$PATH
+            BACKEND_DIR="$HOME/domains/anuj.jaidevs.in/backend"
+
+            echo "=== Syncing latest server code ==="
+            cd $BACKEND_DIR
+
+            # Pull latest server files using git archive from GitHub
+            curl -sL https://github.com/anujverma1475-spec/Complaint-system/archive/refs/heads/main.tar.gz | \
+              tar xz --strip-components=2 Complaint-system-main/server -C $BACKEND_DIR
+
+            # Ensure .env exists with correct values
+            cat > $BACKEND_DIR/.env << 'ENVEOF'
+            MONGO_URI=${{ secrets.MONGO_URI }}
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            PORT=5001
+            ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}
+            ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}
+            ENVEOF
+
+            echo "=== Installing server dependencies ==="
+            cd $BACKEND_DIR
+            npm install --omit=dev
+
+            echo "=== Ensuring uploads directory ==="
+            mkdir -p $BACKEND_DIR/uploads
+
+            echo "=== Restarting Node server ==="
+            pkill -f "node server.js" || true
+            sleep 1
+            nohup node server.js > $BACKEND_DIR/app.log 2>&1 &
+            sleep 2
+            cat $BACKEND_DIR/app.log
+
+            echo "=== Backend deployment done ==="
