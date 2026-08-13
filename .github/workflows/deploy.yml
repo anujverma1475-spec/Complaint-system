@@ -47,12 +47,10 @@ jobs:
             echo "=== Ensuring uploads directory ==="
             mkdir -p $BACKEND_DIR/uploads
 
-            # Restart Node server with stdin/stdout detached so process survives SSH disconnect
-            pkill -f "[n]ode server.js" || true
-            sleep 1
-            nohup node server.js </dev/null >$BACKEND_DIR/app.log 2>&1 &
-            disown
-            sleep 2
+            echo "=== Restarting Node server ==="
+            chmod +x $BACKEND_DIR/restart.sh
+            nohup $BACKEND_DIR/restart.sh </dev/null >/dev/null 2>&1 &
+            sleep 3
             cat $BACKEND_DIR/app.log
 
             echo "=== Backend deployment done ==="
